@@ -1,7 +1,20 @@
+/*
+TODOS:
+    - Logic for revealing empty cells when cliked one of it.
+    - Empty cell logic, that is, a cell can be empty only if its moore neighbour is a hint number or an empty cell.
+    - Game end.
+    - Coloring each number.
+    - Timer when starting.
+    - Smily for game restart.
+    - Step recorder (Optional)
+*/
+
+
 
 const canvas = document.getElementById("canvas");
 const ctx = canvas.getContext("2d");
 let playing = true;
+
 // Configurations
 const BOMB_PROBABILITY = .3;
 const SPACE_PROBABILITY = .5;
@@ -83,6 +96,7 @@ const handleClickEvents = (e) => {
         if (cell.value >= 0) {
             boardArray[cellX][cellY].show = true;
         }
+        // Player lost here
         else if (cell.value === BOMB) {
             playing = false;
         }
