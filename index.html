@@ -1,0 +1,40 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>MineSweeper</title>
+</head>
+
+<style>
+    * {
+        padding: 0;
+        margin: 0;
+        box-sizing: border-box;
+    }
+
+    body {
+        height: 100svh;
+        width: 100%;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        background-color: rgb(100, 96, 96);
+    }
+
+    canvas {
+        border: 2px solid black;
+    }
+</style>
+
+<body>
+    <img src="./mine.png" id="img-mine" hidden>
+    <img src="./flag.png" id="img-flag" hidden>
+
+    <canvas id="canvas" width="500" height="500"></canvas>
+
+    <script src="index.js"></script>
+</body>
+
+</html>
