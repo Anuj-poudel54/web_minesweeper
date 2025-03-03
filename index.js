@@ -1,8 +1,11 @@
 
 const canvas = document.getElementById("canvas");
 const ctx = canvas.getContext("2d");
-
+let playing = true;
 // Configurations
+const BOMB_PROBABILITY = .3;
+const SPACE_PROBABILITY = .5;
+
 const CELL_COUNT = 8;
 const CELL_SIZE = canvas.width / CELL_COUNT; // height & width of a cell
 
@@ -12,6 +15,7 @@ const BOMB = -1;
 
 const TEXT_COLOR = "white";
 const RECT_COLOR = "#4c545c";
+const RECT_COLOR_SHOW = "#83898f";
 const RECT_STROKE_COLOR = "black";
 
 // Shadow
@@ -36,7 +40,7 @@ let boardArray = [];
 for (let i = 0; i < CELL_COUNT; i++) {
     let inner = [];
     for (let j = 0; j < CELL_COUNT; j++) {
-        let cellValue = Math.random() < .5 ? BOMB : EMPTY;
+        let cellValue = Math.random() < BOMB_PROBABILITY ? BOMB : EMPTY;
         let cell = new Cell(cellValue);
         inner.push(cell);
     }
@@ -47,7 +51,7 @@ for (let i = 0; i < CELL_COUNT; i++) {
 for (let i = 0; i < CELL_COUNT; i++) {
     for (let j = 0; j < CELL_COUNT; j++) {
         // Getting moore neighbours only if rand num is < .5
-        if (Math.random() < .5 || boardArray[i][j].value == BOMB) {
+        if (Math.random() < SPACE_PROBABILITY || boardArray[i][j].value == BOMB) {
             continue;
         }
 
@@ -72,11 +76,15 @@ const handleClickEvents = (e) => {
     let cellY = Math.floor((clickedX / CELL_SIZE) % CELL_COUNT);
     let cellX = Math.floor((clickedY / CELL_SIZE) % CELL_COUNT);
 
-    let cellValue = boardArray[cellX][cellY];
+    let cell = boardArray[cellX][cellY];
 
+    if (cell.show) return;
     if (e.type === "click") {
-        if (cellValue > 0) {
+        if (cell.value >= 0) {
             boardArray[cellX][cellY].show = true;
+        }
+        else if (cell.value === BOMB) {
+            playing = false;
         }
         renderBoard(boardArray);
     }
@@ -115,9 +123,26 @@ let renderBoard = (boardArray) => {
             ctx.fillRect(x1, y1, x2, y2);
 
             let cell = boardArray[i][j];
+            if (!playing) {
+                if (cell.value === BOMB)
+                    cell.show = true;
+            }
             if (cell.flagged) {
                 ctx.drawImage(flagImg, x, y, CELL_SIZE * .9, CELL_SIZE * .9);
-            } else if (cell.show) {
+            } else if (cell.show && cell.value === EMPTY) {
+                ctx.fillStyle = RECT_COLOR_SHOW;
+                ctx.fillRect(x1, y1, x2, y2);
+
+            } else if (cell.show && cell.value == BOMB) {
+                ctx.fillStyle = RECT_COLOR_SHOW;
+                ctx.fillRect(x1, y1, x2, y2);
+                ctx.drawImage(mineImg, x, y, CELL_SIZE * .9, CELL_SIZE * .9);
+            }
+            else if (cell.show) {
+
+                ctx.fillStyle = RECT_COLOR_SHOW;
+                ctx.fillRect(x1, y1, x2, y2);
+
                 ctx.fillStyle = TEXT_COLOR;
                 let xc = (x2 + x1) / 2, yc = (y2 + y1) / 2;
                 ctx.fillText(cell.value, xc, yc);
