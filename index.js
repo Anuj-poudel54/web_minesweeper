@@ -93,6 +93,7 @@ const handleClickEvents = (e) => {
 
     if (cell.show) return;
     if (e.type === "click") {
+        if (cell.flagged) return;
         if (cell.value >= 0) {
             boardArray[cellX][cellY].show = true;
         }
