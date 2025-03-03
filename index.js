@@ -81,6 +81,10 @@ for (let i = 0; i < CELL_COUNT; i++) {
     }
 }
 
+const revealWhiteSpaces = () => {
+
+}
+
 const handleClickEvents = (e) => {
     e.preventDefault();
     let clickedX = e.offsetX;
@@ -101,11 +105,11 @@ const handleClickEvents = (e) => {
         else if (cell.value === BOMB) {
             playing = false;
         }
-        renderBoard(boardArray);
+        renderBoard();
     }
     else if (e.type === "contextmenu") {
         boardArray[cellX][cellY].flagged = !boardArray[cellX][cellY].flagged;
-        renderBoard(boardArray);
+        renderBoard();
     }
 
 }
@@ -121,7 +125,7 @@ const flagImg = document.getElementById("img-flag");
 ctx.strokeStyle = RECT_STROKE_COLOR;
 ctx.font = "25px arial";
 
-let renderBoard = (boardArray) => {
+let renderBoard = () => {
 
     let x = 0;
     let y = 0;
@@ -169,4 +173,4 @@ let renderBoard = (boardArray) => {
     }
 }
 
-renderBoard(boardArray);
+renderBoard();
