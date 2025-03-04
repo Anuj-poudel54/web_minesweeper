@@ -1,7 +1,7 @@
 /*
 TODOS:
-    - Logic for revealing empty cells when cliked one of it.
-    - Empty cell logic, that is, a cell can be empty only if its moore neighbour is a hint number or an empty cell.
+    - ✅ Logic for revealing empty cells when cliked one of it.
+    - Empty cell generation logic, that is, a cell can be empty only if it's moore neighbour is a hint number or an empty cell.
     - Game end.
     - Coloring each number.
     - Timer when starting.
@@ -81,8 +81,29 @@ for (let i = 0; i < CELL_COUNT; i++) {
     }
 }
 
-const revealWhiteSpaces = () => {
+const revealEmptyCells = (x, y) => {
+    // Using dfs for cells
+    boardArray[x][y].show = true;
+    let q = [[x, y]];
+    while (q.length > 0) {
+        let [x, y] = q.pop();
 
+        // Moore neighbours
+        for (let i = -1; i <= 1; i++) {
+            for (let j = -1; j <= 1; j++) {
+                let [currX, currY] = [x + i, y + j];
+                if (currX < 0 || currY < 0 || currX >= CELL_COUNT || currY >= CELL_COUNT || (i == 0 && j == 0)) continue;
+
+                let cell = boardArray[currX][currY];
+                if (cell.value === EMPTY && !cell.show && !cell.flagged) {
+                    boardArray[currX][currY].show = true;
+                    q.push([currX, currY]);
+                }
+
+            }
+        }
+
+    }
 }
 
 const handleClickEvents = (e) => {
@@ -98,12 +119,14 @@ const handleClickEvents = (e) => {
     if (cell.show) return;
     if (e.type === "click") {
         if (cell.flagged) return;
-        if (cell.value >= 0) {
+        if (cell.value > 0) {
             boardArray[cellX][cellY].show = true;
         }
         // Player lost here
         else if (cell.value === BOMB) {
             playing = false;
+        } else if (cell.value === EMPTY) {
+            revealEmptyCells(cellX, cellY);
         }
         renderBoard();
     }
