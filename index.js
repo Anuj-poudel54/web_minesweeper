@@ -8,7 +8,7 @@ TODOS:
     - Modal instead of alert for showing game won or lost.
     - Coloring each number.
     - Timer when starting.
-    - Smily for game restart.
+    - Smily face for game restart.
     - Step recorder (Optional)
 */
 
@@ -16,6 +16,11 @@ TODOS:
 
 const canvas = document.getElementById("canvas");
 const ctx = canvas.getContext("2d");
+
+// Game states
+let boardArray = [];
+let hintNumbersCount = 0;
+let revealedHintsNumbers = 0;
 let playing = true;
 
 // Configurations
