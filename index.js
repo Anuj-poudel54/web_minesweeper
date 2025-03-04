@@ -2,9 +2,10 @@
 TODOS:
     - ✅ Logic for revealing empty cells when cliked one of it.
     - ✅ Empty cell generation logic, that is, a cell can be empty only if it's moore neighbour is a hint number or an empty cell.
-    - Hint numbers are not accurate.
-    - User getLegalMooreNeighbours method.
-    - Game end.
+    - ✅ Hint numbers are not accurate.
+    - ✅ User getLegalMooreNeighbours method.
+    - ✅ Game end and won logic.
+    - Modal instead of alert for showing game won or lost.
     - Coloring each number.
     - Timer when starting.
     - Smily for game restart.
