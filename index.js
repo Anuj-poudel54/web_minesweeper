@@ -221,11 +221,9 @@ const renderBoard = () => {
 
     if (won) {
         alert("You won :)");
-        return;
     }
     else if (!playing && !won) {
         alert("You lost :(");
-        return;
     }
 }
 
