@@ -22,10 +22,12 @@ let boardArray = [];
 let hintNumbersCount = 0;
 let revealedHintsNumbers = 0;
 let playing = true;
+let won = false;
 
 // Configurations
+const HACK = false;
 const BOMB_PROBABILITY = .3;
-const EMPTY_CELL_PROBABILITY = .5;
+const EMPTY_CELL_PROBABILITY = .7;
 
 const CELL_COUNT = 8;
 const CELL_SIZE = canvas.width / CELL_COUNT; // height & width of a cell
@@ -55,8 +57,6 @@ class Cell {
 }
 
 
-let boardArray = [];
-
 const isLegalCoord = (x, y) => {
     return x >= 0 && y >= 0 && x < CELL_COUNT && y < CELL_COUNT
 }
@@ -85,29 +85,21 @@ for (let i = 0; i < CELL_COUNT; i++) {
     boardArray.push(inner);
 }
 
-
 // populating hint numbers and empty cells
 for (let i = 0; i < CELL_COUNT; i++) {
     for (let j = 0; j < CELL_COUNT; j++) {
-        // Getting moore neighbours only if rand num is < .5
-        if (Math.random() < EMPTY_CELL_PROBABILITY || boardArray[i][j].value == BOMB) {
+        const cell = boardArray[i][j];
+        if (cell.value === BOMB) continue;
 
-            const mooreNeighs = getLegalMooreNeighbours(i, j);
-            const isLegalEmtpyLegal = mooreNeighs.every(([x, y]) => boardArray[x][y].value !== BOMB);
-            if (isLegalEmtpyLegal) continue;
+        const neighs = getLegalMooreNeighbours(i, j);
+        const canbeEmpty = neighs.every(([x, y]) => boardArray[x][y].value !== BOMB);
+        if (canbeEmpty && Math.random() < EMPTY_CELL_PROBABILITY) continue;
 
-        }
+        // calculating bomb counts
+        const totalBombAround = neighs.reduce((a, [x, y]) => a + (boardArray[x][y].value === BOMB), 0);
+        boardArray[i][j].value = totalBombAround;
+        hintNumbersCount++;
 
-        let neighBombCount = 0;
-        for (let m = -1; m <= 1; m++) {
-            for (let n = -1; n <= 1; n++) {
-                let x = i + m, y = j + n;
-                if ((x >= 0 && y >= 0) && (x < CELL_COUNT && y < CELL_COUNT)) {
-                    neighBombCount += boardArray[x][y].value == BOMB ? 1 : 0;
-                }
-            }
-        }
-        boardArray[i][j].value = neighBombCount;
     }
 }
 
@@ -147,6 +139,8 @@ const handleClickEvents = (e) => {
         if (cell.flagged) return;
         if (cell.value > 0) {
             boardArray[cellX][cellY].show = true;
+            revealedHintsNumbers++;
+            won = revealedHintsNumbers === hintNumbersCount;
         }
         // Player lost here
         else if (cell.value === BOMB) {
@@ -174,7 +168,7 @@ const flagImg = document.getElementById("img-flag");
 ctx.strokeStyle = RECT_STROKE_COLOR;
 ctx.font = "25px arial";
 
-let renderBoard = () => {
+const renderBoard = () => {
 
     let x = 0;
     let y = 0;
@@ -194,6 +188,10 @@ let renderBoard = () => {
             if (!playing) {
                 if (cell.value === BOMB)
                     cell.show = true;
+            }
+            if (cell.value === BOMB && HACK) {
+                ctx.fillStyle = "red";
+                ctx.fillRect(x1, y1, x2, y2);
             }
             if (cell.flagged) {
                 ctx.drawImage(flagImg, x, y, CELL_SIZE * .9, CELL_SIZE * .9);
@@ -219,6 +217,15 @@ let renderBoard = () => {
             x += CELL_SIZE;
         }
         y += CELL_SIZE;
+    }
+
+    if (won) {
+        alert("You won :)");
+        return;
+    }
+    else if (!playing && !won) {
+        alert("You lost :(");
+        return;
     }
 }
 
