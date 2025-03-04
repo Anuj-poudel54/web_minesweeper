@@ -1,7 +1,9 @@
 /*
 TODOS:
     - ✅ Logic for revealing empty cells when cliked one of it.
-    - Empty cell generation logic, that is, a cell can be empty only if it's moore neighbour is a hint number or an empty cell.
+    - ✅ Empty cell generation logic, that is, a cell can be empty only if it's moore neighbour is a hint number or an empty cell.
+    - Hint numbers are not accurate.
+    - User getLegalMooreNeighbours method.
     - Game end.
     - Coloring each number.
     - Timer when starting.
@@ -17,7 +19,7 @@ let playing = true;
 
 // Configurations
 const BOMB_PROBABILITY = .3;
-const SPACE_PROBABILITY = .5;
+const EMPTY_CELL_PROBABILITY = .5;
 
 const CELL_COUNT = 8;
 const CELL_SIZE = canvas.width / CELL_COUNT; // height & width of a cell
@@ -49,6 +51,23 @@ class Cell {
 
 let boardArray = [];
 
+const isLegalCoord = (x, y) => {
+    return x >= 0 && y >= 0 && x < CELL_COUNT && y < CELL_COUNT
+}
+
+const getLegalMooreNeighbours = (i, j) => {
+    // Returns moore neighbours' coordinats
+    let neighbours = [];
+    for (let m = -1; m <= 1; m++) {
+        for (let n = -1; n <= 1; n++) {
+            let [x, y] = [i + m, j + n];
+            if ((x === i && y === j) || !isLegalCoord(x, y)) continue;
+            neighbours.push([x, y]);
+        }
+    }
+    return neighbours;
+}
+
 // Generating bomb
 for (let i = 0; i < CELL_COUNT; i++) {
     let inner = [];
@@ -60,12 +79,17 @@ for (let i = 0; i < CELL_COUNT; i++) {
     boardArray.push(inner);
 }
 
-// populating hint number counts
+
+// populating hint numbers and empty cells
 for (let i = 0; i < CELL_COUNT; i++) {
     for (let j = 0; j < CELL_COUNT; j++) {
         // Getting moore neighbours only if rand num is < .5
-        if (Math.random() < SPACE_PROBABILITY || boardArray[i][j].value == BOMB) {
-            continue;
+        if (Math.random() < EMPTY_CELL_PROBABILITY || boardArray[i][j].value == BOMB) {
+
+            const mooreNeighs = getLegalMooreNeighbours(i, j);
+            const isLegalEmtpyLegal = mooreNeighs.every(([x, y]) => boardArray[x][y].value !== BOMB);
+            if (isLegalEmtpyLegal) continue;
+
         }
 
         let neighBombCount = 0;
@@ -88,18 +112,14 @@ const revealEmptyCells = (x, y) => {
     while (q.length > 0) {
         let [x, y] = q.pop();
 
-        // Moore neighbours
-        for (let i = -1; i <= 1; i++) {
-            for (let j = -1; j <= 1; j++) {
-                let [currX, currY] = [x + i, y + j];
-                if (currX < 0 || currY < 0 || currX >= CELL_COUNT || currY >= CELL_COUNT || (i == 0 && j == 0)) continue;
+        const neighs = getLegalMooreNeighbours(x, y);
 
-                let cell = boardArray[currX][currY];
-                if (cell.value === EMPTY && !cell.show && !cell.flagged) {
-                    boardArray[currX][currY].show = true;
+        for (let [currX, currY] of neighs) {
+            let cell = boardArray[currX][currY];
+            if (cell.value >= EMPTY && !cell.show && !cell.flagged) {
+                boardArray[currX][currY].show = true;
+                if (cell.value === EMPTY)
                     q.push([currX, currY]);
-                }
-
             }
         }
 
