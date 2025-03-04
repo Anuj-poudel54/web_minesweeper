@@ -8,4 +8,4 @@
 - If revealed cell has mine, you loose.
 - Number represent how many mines are there in its [moore neighbourhood](https://en.wikipedia.org/wiki/Moore_neighborhood)
 
-![alt text](board.png "Title")
+![alt text](board.png "Minesweeper board")
