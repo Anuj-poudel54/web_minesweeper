@@ -15,10 +15,11 @@ TODOS:
 
 
 const canvas = document.getElementById("canvas");
+const gameStatsWrapper = document.querySelector(".game-stats");
 const ctx = canvas.getContext("2d");
 
+
 // Game states
-let boardArray = [];
 let hintNumbersCount = 0;
 let revealedHintsNumbers = 0;
 let playing = true;
@@ -40,11 +41,6 @@ const TEXT_COLOR = "white";
 const RECT_COLOR = "#4c545c";
 const RECT_COLOR_SHOW = "#83898f";
 const RECT_STROKE_COLOR = "black";
-
-// Shadow
-const SHADOW_COLOR = "lightblue";
-const SHADOW_OFFSET_X = -10;
-const SHADOW_OFFSET_Y = -10;
 
 class Cell {
     value = null;
@@ -74,37 +70,44 @@ const getLegalMooreNeighbours = (i, j) => {
     return neighbours;
 }
 
-// Generating bomb
-for (let i = 0; i < CELL_COUNT; i++) {
-    let inner = [];
-    for (let j = 0; j < CELL_COUNT; j++) {
-        let cellValue = Math.random() < BOMB_PROBABILITY ? BOMB : EMPTY;
-        let cell = new Cell(cellValue);
-        inner.push(cell);
+const initializeGameStates = () => {
+
+    won = false;
+    playing = true;
+    const boardArray = [];
+    // Generating bomb
+    for (let i = 0; i < CELL_COUNT; i++) {
+        let inner = [];
+        for (let j = 0; j < CELL_COUNT; j++) {
+            let cellValue = Math.random() < BOMB_PROBABILITY ? BOMB : EMPTY;
+            let cell = new Cell(cellValue);
+            inner.push(cell);
+        }
+        boardArray.push(inner);
     }
-    boardArray.push(inner);
-}
 
-// populating hint numbers and empty cells
-for (let i = 0; i < CELL_COUNT; i++) {
-    for (let j = 0; j < CELL_COUNT; j++) {
-        const cell = boardArray[i][j];
-        if (cell.value === BOMB) continue;
+    // populating hint numbers and empty cells
+    for (let i = 0; i < CELL_COUNT; i++) {
+        for (let j = 0; j < CELL_COUNT; j++) {
+            const cell = boardArray[i][j];
+            if (cell.value === BOMB) continue;
 
-        const neighs = getLegalMooreNeighbours(i, j);
-        const canbeEmpty = neighs.every(([x, y]) => boardArray[x][y].value !== BOMB);
-        if (canbeEmpty && Math.random() < EMPTY_CELL_PROBABILITY) continue;
+            const neighs = getLegalMooreNeighbours(i, j);
+            const canbeEmpty = neighs.every(([x, y]) => boardArray[x][y].value !== BOMB);
+            if (canbeEmpty && Math.random() < EMPTY_CELL_PROBABILITY) continue;
 
-        // calculating bomb counts
-        const totalBombAround = neighs.reduce((a, [x, y]) => a + (boardArray[x][y].value === BOMB), 0);
-        boardArray[i][j].value = totalBombAround;
-        hintNumbersCount++;
+            // calculating bomb counts
+            const totalBombAround = neighs.reduce((a, [x, y]) => a + (boardArray[x][y].value === BOMB), 0);
+            boardArray[i][j].value = totalBombAround;
+            hintNumbersCount++;
 
+        }
     }
+    return boardArray;
 }
 
 const revealEmptyCells = (x, y) => {
-    // Using dfs for cells
+    // Using dfs for searching empty cells
     boardArray[x][y].show = true;
     let q = [[x, y]];
     while (q.length > 0) {
@@ -134,7 +137,7 @@ const handleClickEvents = (e) => {
 
     let cell = boardArray[cellX][cellY];
 
-    if (cell.show) return;
+    if (cell.show || !playing) return;
     if (e.type === "click") {
         if (cell.flagged) return;
         if (cell.value > 0) {
@@ -169,7 +172,6 @@ ctx.strokeStyle = RECT_STROKE_COLOR;
 ctx.font = "25px arial";
 
 const renderBoard = () => {
-
     let x = 0;
     let y = 0;
 
@@ -223,8 +225,28 @@ const renderBoard = () => {
         alert("You won :)");
     }
     else if (!playing && !won) {
-        alert("You lost :(");
+        toggleSmily();
     }
 }
 
+let boardArray = initializeGameStates();
 renderBoard();
+
+
+// UI handling
+gameStatsWrapper.onclick = (e) => {
+    if (Array.from(e.target.classList).includes("smily")) {
+        console.log("Clicked")
+        boardArray = initializeGameStates();
+        renderBoard();
+        const allSmily = gameStatsWrapper.querySelectorAll(".smily");
+        allSmily[0].hidden = false;
+        allSmily[1].hidden = true;
+    }
+
+}
+const toggleSmily = () => {
+    gameStatsWrapper.querySelectorAll(".smily").forEach(img => {
+        img.hidden = !img.hidden;
+    })
+}
