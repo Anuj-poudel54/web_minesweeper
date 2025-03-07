@@ -18,6 +18,8 @@
         height: 100svh;
         width: 100%;
         display: flex;
+        flex-direction: column;
+        gap: 2rem;
         justify-content: center;
         align-items: center;
         background-color: rgb(100, 96, 96);
@@ -26,12 +28,39 @@
     canvas {
         border: 2px solid black;
     }
+
+    dialog {
+        margin: auto;
+        border: none;
+        width: 32%;
+        aspect-ratio: 1;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        color: rgb(134, 97, 97);
+        font-size: 4rem;
+        border-radius: 1%;
+
+    }
+
+    button,
+    .btn,
+    input[type=button] {
+        padding: .3rem;
+        background-color: rgb(219, 153, 153);
+        cursor: pointer;
+    }
 </style>
 
 <body>
     <img src="./mine.png" id="img-mine" hidden>
     <img src="./flag.png" id="img-flag" hidden>
 
+
+    <div class="game-stats">
+        <img class="smily btn" width="50" src="./smily.png" id="img-flag">
+        <img class="smily btn" hidden width="50" src="./dead.png" id="img-flag">
+    </div>
     <canvas id="canvas" width="500" height="500"></canvas>
 
     <script src="index.js"></script>
