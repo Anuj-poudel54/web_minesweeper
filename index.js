@@ -12,7 +12,17 @@ TODOS:
     - Step recorder (Optional)
 */
 
+/*
+create a function in c that gives you value of each cell like generators in python.
+    get_next_cell();
 
+also function that changes the value of the cell array.
+    change_cell_value( x, y, show, flagged);
+
+
+FLOW:
+ call set_cell_count(int) and set number of cells to be initialized
+*/
 
 const canvas = document.getElementById("canvas");
 const gameStatsWrapper = document.querySelector(".game-stats");
@@ -236,7 +246,6 @@ renderBoard();
 // UI handling
 gameStatsWrapper.onclick = (e) => {
     if (Array.from(e.target.classList).includes("smily")) {
-        console.log("Clicked")
         boardArray = initializeGameStates();
         renderBoard();
         const allSmily = gameStatsWrapper.querySelectorAll(".smily");
