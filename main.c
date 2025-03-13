@@ -195,6 +195,7 @@ EXTERNAL void reveal_empty_cells(int x, int y)
             }
         }
     }
+    vec2q_free(q);
 }
 
 EXTERNAL int has_won()
