@@ -124,6 +124,10 @@ EXTERNAL int initialize_game_states()
 
 EXTERNAL void set_cell_count(int cell_count_a)
 {
+    // board is already initialized with cell_count_a number of rows and cols.
+    if (is_board_initialized && cell_count_a == cell_count)
+        return;
+
     boardArray = (Cell **)malloc(cell_count_a * sizeof(Cell *));
     if (boardArray == NULL)
     {
