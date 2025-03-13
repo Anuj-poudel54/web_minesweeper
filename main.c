@@ -202,8 +202,16 @@ EXTERNAL int has_won()
     return won;
 }
 
-/* value of cell at index [x][y] will be appended in cell_arr in order of {value, flagged, show} */
-EXTERNAL int get_cell_at(int x, int y, int *cell_arr)
+EXTERNAL int get_hint_number_count()
+{
+    return hint_number_count;
+}
+
+/* value of cell at index [x][y] will be appended in cell_arr in order of {value, flagged, show}
+If post x y is not legal return 0 else 1
+*/
+EXTERNAL int
+get_cell_at(int x, int y, int *cell_arr)
 {
     Cell cell = boardArray[x][y];
     cell_arr[0] = cell.value;
