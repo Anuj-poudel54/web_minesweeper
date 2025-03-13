@@ -1,4 +1,4 @@
-## Recreating old classic game 'Minsweeper'.
+## Recreating old classic game 'Minesweeper'.
 
 **Easy to play**
 
