@@ -1,5 +1,6 @@
 #include <stdio.h>
 #include <stdlib.h>
+
 #define USING_VECTOR_IMPL
 #include "vector.h"
 #define EXTERNAL
@@ -31,6 +32,9 @@ int cell_count = 0;
 Cell **boardArray = NULL;
 int is_board_initialized = 0;
 
+/* Imported function.
+ Returns value ranging [0,1]
+ */
 extern float get_random_value();
 
 int is_legal_coord(Vec2 vec)
@@ -56,8 +60,9 @@ int get_legal_moore_neighbours(int i, int j)
     return k;
 }
 
-EXTERNAL
-int initialize_game_states()
+// exported functions
+
+EXTERNAL int initialize_game_states()
 {
 
     if (!is_board_initialized)
@@ -119,8 +124,7 @@ int initialize_game_states()
     return 1;
 }
 
-EXTERNAL
-void set_cell_count(int cell_count_a)
+EXTERNAL void set_cell_count(int cell_count_a)
 {
     boardArray = (int **)malloc(cell_count_a * sizeof(int *));
     if (boardArray == NULL)
@@ -138,8 +142,7 @@ void set_cell_count(int cell_count_a)
     is_board_initialized = 1;
 }
 
-EXTERNAL
-int change_cell_values(int row_a, int col_a, int flagged, int show)
+EXTERNAL int change_cell_values(int row_a, int col_a, int flagged, int show)
 {
     if (row_a >= cell_count || col_a >= cell_count)
         return 0;
@@ -153,8 +156,7 @@ int change_cell_values(int row_a, int col_a, int flagged, int show)
 puts cell values in 'cell_arr' array and return 1 but if
 row and col exceeded the boardArray size it returns 0;
 */
-EXTERNAL
-int get_next_cell(int *cell_arr)
+EXTERNAL int get_next_cell(int *cell_arr)
 {
     if (col >= cell_count)
     {
@@ -180,7 +182,7 @@ EXTERNAL int is_playing()
     return playing;
 }
 
-EXTERNAL void reveal_empty_cell(int x, int y)
+EXTERNAL void reveal_empty_cells(int x, int y)
 {
     // Using dfs for searching empty cells
     boardArray[x][y].show = 1;
@@ -220,11 +222,12 @@ EXTERNAL void reveal_empty_cell(int x, int y)
     }
 }
 
-EXTERNAL int has_playing()
+EXTERNAL int has_won()
 {
     return won;
 }
 
+/* value of cell at index [x][y] will be appended in cell_arr in order of {value, flagged, show} */
 EXTERNAL int get_cell_at(int x, int y, int *cell_arr)
 {
     Cell cell = boardArray[x][y];
