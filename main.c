@@ -10,13 +10,11 @@ const int EMPTY = 0; // represents empty cell
 const int BOMB = -1; // represents empty cell
 
 // Configurations
-const int HACK = 0;
 const float BOMB_PROBABILITY = 0.3;
 const float EMPTY_CELL_PROBABILITY = 0.7;
 
 // Game states
 int hint_number_count = 0;
-int reveal_hint_numbers = 0;
 int playing = 1;
 int won = 0;
 int row = 0, col = 0;
