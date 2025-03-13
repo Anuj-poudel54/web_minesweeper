@@ -27,6 +27,7 @@ Vec2Q *create_vect2_q()
     q->f = 0;
     q->b = 0;
     q->capacity = 3;
+    return q;
 }
 
 void vec2q_enqueue(Vec2Q *q, Vec2 vec)
