@@ -126,7 +126,7 @@ EXTERNAL int initialize_game_states()
 
 EXTERNAL void set_cell_count(int cell_count_a)
 {
-    boardArray = (int **)malloc(cell_count_a * sizeof(int *));
+    boardArray = (Cell **)malloc(cell_count_a * sizeof(Cell *));
     if (boardArray == NULL)
     {
         return;
