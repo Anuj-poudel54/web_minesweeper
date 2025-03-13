@@ -5,6 +5,7 @@ TODOS:
     - ✅ Hint numbers are not accurate.
     - ✅ User getLegalMooreNeighbours method.
     - ✅ Game end and won logic.
+    - Adding wasm 😀
     - Modal instead of alert for showing game won or lost.
     - Coloring each number.
     - Timer when starting.
@@ -13,15 +14,15 @@ TODOS:
 */
 
 /*
-create a function in c that gives you value of each cell like generators in python.
-    get_next_cell();
+create a function in c that gives you cell value by index.
+     get_cell_at(x,y) -> arr[value,flagged,show];
 
 also function that changes the value of the cell array.
     change_cell_value( x, y, show, flagged);
 
-
 FLOW:
  call set_cell_count(int) and set number of cells to be initialized
+ to render iterate and call get_cell_at(...)
 */
 
 const canvas = document.getElementById("canvas");
