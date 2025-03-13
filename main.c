@@ -17,7 +17,6 @@ const float EMPTY_CELL_PROBABILITY = 0.7;
 int hint_number_count = 0;
 int playing = 1;
 int won = 0;
-int row = 0, col = 0;
 
 typedef struct
 {
@@ -68,7 +67,6 @@ EXTERNAL int initialize_game_states()
 
     won = 0;
     playing = 1;
-    row = 0, col = 0;
 
     // Generating bomb
     for (int i = 0; i < cell_count; i++)
