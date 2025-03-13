@@ -1,11 +1,12 @@
 #include <stdio.h>
 #include <stdlib.h>
+#define USING_VECTOR_IMPL
 #include "vector.h"
 #define EXTERNAL
 
 // cells values
-const int EMPTY = 0; // in cell's value
-const int BOMB = -1; // in cell's value
+const int EMPTY = 0; // represents empty cell
+const int BOMB = -1; // represents empty cell
 
 // Configurations
 const int HACK = 0;
@@ -181,24 +182,39 @@ EXTERNAL int is_playing()
 
 EXTERNAL void reveal_empty_cell(int x, int y)
 {
-    // TODO:
     // Using dfs for searching empty cells
-    boardArray[x][y].show = 0;
-    int q[] = [[x, y]];
-    while (q.length > 0)
+    boardArray[x][y].show = 1;
+
+    // int q[] = [[x, y]];
+    Vec2Q *q = create_vect2_q();
+    vec2q_enqueue(q, (Vec2){x, y});
+
+    // while (q.length > 0)
+    while (!vec2q_is_empty(q))
     {
-        let[x, y] = q.pop();
+        // let[x, y] = q.pop();
+        Vec2 v = vec2q_dequeue(q);
+        int x = v.x, y = v.y;
 
-        const neighs = getLegalMooreNeighbours(x, y);
+        // const neighs = getLegalMooreNeighbours(x, y);
+        int neighs_count = get_legal_moore_neighbours(x, y);
 
-        for (let[currX, currY] of neighs)
+        // for (let[currX, currY] of neighs)
+        for (int i = 0; i < neighs_count; i++)
         {
-            let cell = boardArray[currX][currY];
+            // let cell = boardArray[currX][currY];
+            Vec2 v = neighbours[i];
+            int curr_x = v.x, curr_y = v.y;
+            Cell cell = boardArray[curr_x][curr_y];
+
             if (cell.value >= EMPTY && !cell.show && !cell.flagged)
             {
-                boardArray[currX][currY].show = true;
-                if (cell.value == = EMPTY)
-                    q.push([ currX, currY ]);
+                boardArray[curr_x][curr_y].show = 1;
+                if (cell.value == EMPTY)
+                {
+                    // q.push([ currX, currY ]);
+                    vec2q_enqueue(q, (Vec2){curr_x, curr_y});
+                }
             }
         }
     }
