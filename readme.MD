@@ -1,4 +1,4 @@
-## Recreating minsweeper old classic game in vanilla JS.
+## Recreating old classic game 'Minsweeper'.
 
 **Easy to play**
 
