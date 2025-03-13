@@ -152,31 +152,6 @@ EXTERNAL int change_cell_values(int row_a, int col_a, int flagged, int show)
     return 1;
 }
 
-/*
-puts cell values in 'cell_arr' array and return 1 but if
-row and col exceeded the boardArray size it returns 0;
-*/
-EXTERNAL int get_next_cell(int *cell_arr)
-{
-    if (col >= cell_count)
-    {
-        row++;
-        col = 0;
-    }
-    if (row >= cell_count)
-    {
-        row = 0;
-        col = 0;
-        return 0;
-    }
-    Cell cell = boardArray[row][col++];
-    cell_arr[0] = cell.value;
-    cell_arr[1] = cell.flagged;
-    cell_arr[2] = cell.show;
-
-    return 1;
-}
-
 EXTERNAL int is_playing()
 {
     return playing;
