@@ -213,10 +213,13 @@ If post x y is not legal return 0 else 1
 EXTERNAL int
 get_cell_at(int x, int y, int *cell_arr)
 {
+    if (!is_legal_coord((Vec2){x, y}))
+        return 0;
     Cell cell = boardArray[x][y];
     cell_arr[0] = cell.value;
     cell_arr[1] = cell.flagged;
     cell_arr[2] = cell.show;
+    return 1;
 }
 
 EXTERNAL void greet_console()
