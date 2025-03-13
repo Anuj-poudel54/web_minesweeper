@@ -63,12 +63,12 @@
     </div>
     <canvas id="canvas" width="500" height="500"></canvas>
 
-    <script src="index.js"></script>
     <script src="wasm.js"></script>
+    <script defer src="index.js"></script>
 
     <script>
         setTimeout(() => {
-            Module.ccall('greet_console', null, null, null, null);
+            Module.ccall('dprint', null, null, null, null);
         }, 500);
     </script>
 </body>
