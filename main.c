@@ -221,7 +221,8 @@ get_cell_at(int x, int y, int *cell_arr)
     return 1;
 }
 
-EXTERNAL void greet_console()
+EXTERNAL void dprint()
 {
     printf("WASM is working...\n");
+    printf("Random value generator working:  %f\n", get_random_value());
 }
