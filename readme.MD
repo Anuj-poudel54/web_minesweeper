@@ -7,6 +7,6 @@
 - Left click to reveal number.
 - If revealed cell has mine, you loose.
 - Number represent how many mines are there in its [moore neighbourhood](https://en.wikipedia.org/wiki/Moore_neighborhood)
-- Click on <img src="smily.png" width="20" /> / <img src="dead.png" width="20" /> to restart the game
+- Click on <img src="./assets/smily.png" width="20" /> / <img src="./assets/dead.png" width="20" /> to restart the game
 
-![alt text](board.png "Minesweeper board")
+![alt text](./assets/board.png "Minesweeper board")
