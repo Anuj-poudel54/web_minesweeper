@@ -79,7 +79,7 @@ function gameLoader() {
     const EMPTY_CELL_PROBABILITY = .5;
     const REVEAL_CELLS_AT_INIT = true;
 
-    const CELL_COUNT = 8;
+    const CELL_COUNT = 10;
     const CELL_SIZE = canvas.width / CELL_COUNT; // height & width of a cell
 
     // cells states
@@ -138,7 +138,7 @@ function gameLoader() {
     const flagImg = document.getElementById("img-flag");
 
     ctx.strokeStyle = RECT_STROKE_COLOR;
-    ctx.font = "25px arial";
+    ctx.font = (CELL_COUNT + 6) + "px arial bold";
 
     const renderBoard = () => {
         // x, y position of a cell in canvas while drawing
