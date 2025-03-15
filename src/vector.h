@@ -1,8 +1,8 @@
 #include <stdio.h>
 #include <stdlib.h>
 
-#ifndef VECTOR_n
-#define VECTOR_n
+#ifndef VECTOR_H
+#define VECTOR_H
 
 typedef struct
 {
@@ -59,4 +59,4 @@ void vec2q_free(Vec2Q *q)
 }
 
 #endif // USING_VECTOR_IMPL
-#endif // VECTOR_n
+#endif // VECTOR_H
