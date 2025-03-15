@@ -53,7 +53,7 @@ function gameLoader() {
     const wasm_get_cell_at = Module.cwrap("get_cell_at", num_t, [num_t, num_t, num_t])
     const wasm_change_cell_values = Module.cwrap("change_cell_values", null, [num_t, num_t, num_t, num_t])
 
-    const wasm_initialize_game_states = Module.cwrap("initialize_game_states", num_t);
+    const wasm_initialize_game_states = Module.cwrap("initialize_game_states", num_t, [num_t], [num_t]);
     const wasm_set_bomb_prob = Module.cwrap("set_bomb_probability", null, [num_t]);
     const wasm_set_empty_cell_prob = Module.cwrap("set_empty_cell_probability", null, [num_t]);
     const wasm_set_cell_count = Module.cwrap("set_cell_count", null, [num_t]);
@@ -95,7 +95,7 @@ function gameLoader() {
     wasm_set_cell_count(CELL_COUNT);
     wasm_set_bomb_prob(BOMB_PROBABILITY);
     wasm_set_empty_cell_prob(EMPTY_CELL_PROBABILITY);
-    const is_initialized = wasm_initialize_game_states();
+    const is_initialized = wasm_initialize_game_states(0);
 
     console.log("INITIALIZED: ", is_initialized);
 
