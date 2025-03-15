@@ -50,12 +50,66 @@
         background-color: rgb(219, 153, 153);
         cursor: pointer;
     }
+
+    .instructions {
+        background-color: rgba(255, 255, 255, 0.2);
+        color: white;
+        line-height: 2rem;
+        border: 2px solid #000;
+        padding: 20px;
+        width: 40%;
+        border-radius: 10px;
+        backdrop-filter: blur(5px);
+        position: fixed;
+        top: 50%;
+        left: 50%;
+        transform: translate(-50%, -50%);
+        display: none;
+        z-index: 1000;
+        font-weight: bold;
+        font-size: 1.2rem;
+    }
+
+    .show-instructions {
+        display: block;
+    }
+
+    .close-btn {
+        background-color: rgb(219, 153, 153);
+        cursor: pointer;
+        padding: .3rem;
+        border: none;
+        position: absolute;
+        top: 10px;
+        right: 10px;
+    }
+
+    .how-to-play-btn {
+        position: absolute;
+        top: 10px;
+        right: 10px;
+        padding: .5rem 1rem;
+        background-color: rgb(219, 153, 153);
+        cursor: pointer;
+        border: none;
+        border-radius: 5px;
+    }
 </style>
 
 <body>
     <img src="./assets/mine.png" id="img-mine" hidden>
     <img src="./assets/flag.png" id="img-flag" hidden>
-
+    <button class="how-to-play-btn">How to Play?</button>
+    <div class="instructions">
+        <button class="close-btn">X</button>
+        <ul>
+            <li>Click on a tile to reveal it.</li>
+            <li>Numbers indicate how many mines are in adjacent cells.</li>
+            <li>Right-click to flag a mine.</li>
+            <li>Win by revealing all non-mine tiles.</li>
+            <li>Lose if you click on a mine.</li>
+        </ul>
+    </div>
 
     <div class="game-stats">
         <img class="smily btn" width="50" src="./assets/smily.png" id="img-flag">
@@ -67,6 +121,14 @@
     <script defer src="index.js"></script>
 
     <script>
+        document.querySelector('.how-to-play-btn').addEventListener('click', () => {
+            document.querySelector('.instructions').classList.add('show-instructions');
+        });
+
+        document.querySelector('.close-btn').addEventListener('click', () => {
+            document.querySelector('.instructions').classList.remove('show-instructions');
+        });
+
         setTimeout(() => {
             Module.ccall('dprint', null, null, null, null);
         }, 500);
