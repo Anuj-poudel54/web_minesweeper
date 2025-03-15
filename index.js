@@ -70,9 +70,9 @@ Module.onRuntimeInitialized = function () {
 
 
     // Configurations
-    const HACK = false;
-    const BOMB_PROBABILITY = .3;
-    const EMPTY_CELL_PROBABILITY = .7;
+    const HACK = true;
+    const BOMB_PROBABILITY = .255;
+    const EMPTY_CELL_PROBABILITY = .5;
 
     const CELL_COUNT = 8;
     const CELL_SIZE = canvas.width / CELL_COUNT; // height & width of a cell
