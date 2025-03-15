@@ -43,14 +43,13 @@ class Cell {
 // WASAM-y-thingy here
 const num_t = 'number';
 
-// console.log(Module.calledRun);
-Module.onRuntimeInitialized = function () {
+function gameLoader() {
 
     // a cell's data will come int this memory buffer
     let cell_buffer = null;
     cell_buffer = Module._malloc(3 * Int32Array.BYTES_PER_ELEMENT);
-
     // wraping all the wasm functions
+    const wasm_free_all = Module.cwrap("free_all", null);
     const wasm_get_cell_at = Module.cwrap("get_cell_at", num_t, [num_t, num_t, num_t])
     const wasm_change_cell_values = Module.cwrap("change_cell_values", null, [num_t, num_t, num_t, num_t])
 
@@ -68,9 +67,14 @@ Module.onRuntimeInitialized = function () {
         return new Cell(array[0], array[1], array[2]);
     }
 
+    window.onbeforeunload = function (e) {
+        console.log("Freeing your resources like a good programmer");
+        Module._free(cell_buffer);
+        wasm_free_all();
+    }
 
     // Configurations
-    const HACK = true;
+    const HACK = false;
     const BOMB_PROBABILITY = .255;
     const EMPTY_CELL_PROBABILITY = .5;
 
@@ -224,3 +228,8 @@ Module.onRuntimeInitialized = function () {
         })
     }
 }
+
+if (Module.calledRun) {
+    gameLoader();
+} else
+    Module.onRuntimeInitialized = gameLoader;
