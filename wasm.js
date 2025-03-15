@@ -1273,10 +1273,10 @@ var _initialize_game_states = Module['_initialize_game_states'] = createExportWr
 var _set_cell_count = Module['_set_cell_count'] = createExportWrapper('set_cell_count', 1);
 var _change_cell_values = Module['_change_cell_values'] = createExportWrapper('change_cell_values', 4);
 var _is_playing = Module['_is_playing'] = createExportWrapper('is_playing', 0);
-var _reveal_empty_cells = Module['_reveal_empty_cells'] = createExportWrapper('reveal_empty_cells', 2);
 var _has_won = Module['_has_won'] = createExportWrapper('has_won', 0);
-var _get_hint_number_count = Module['_get_hint_number_count'] = createExportWrapper('get_hint_number_count', 0);
 var _get_cell_at = Module['_get_cell_at'] = createExportWrapper('get_cell_at', 3);
+var _set_bomb_probability = Module['_set_bomb_probability'] = createExportWrapper('set_bomb_probability', 1);
+var _set_empty_cell_probability = Module['_set_empty_cell_probability'] = createExportWrapper('set_empty_cell_probability', 1);
 var _dprint = Module['_dprint'] = createExportWrapper('dprint', 0);
 var _fflush = createExportWrapper('fflush', 1);
 var _strerror = createExportWrapper('strerror', 1);

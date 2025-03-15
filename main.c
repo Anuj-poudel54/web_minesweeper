@@ -10,11 +10,12 @@ const int EMPTY = 0; // represents empty cell
 const int BOMB = -1; // represents empty cell
 
 // Configurations
-const float BOMB_PROBABILITY = 0.3;
-const float EMPTY_CELL_PROBABILITY = 0.7;
+float BOMB_PROBABILITY = 0.3;
+float EMPTY_CELL_PROBABILITY = 0.5;
 
 // Game states
 int hint_number_count = 0;
+int revealed_count = 0;
 int playing = 1;
 int won = 0;
 
@@ -57,6 +58,16 @@ int get_legal_moore_neighbours(int i, int j)
     return k;
 }
 
+void reveal_cell(int x, int y)
+{
+    if (!is_legal_coord((Vec2){x, y}))
+        return;
+
+    boardArray[x][y].show = 1;
+    if (boardArray[x][y].value > EMPTY)
+        revealed_count++;
+}
+
 // exported functions
 
 EXTERNAL int initialize_game_states()
@@ -67,6 +78,8 @@ EXTERNAL int initialize_game_states()
 
     won = 0;
     playing = 1;
+    hint_number_count = 0;
+    revealed_count = 0;
 
     // Generating bomb
     for (int i = 0; i < cell_count; i++)
@@ -89,13 +102,14 @@ EXTERNAL int initialize_game_states()
                 continue;
 
             int neighs_count = get_legal_moore_neighbours(i, j);
-            int can_be_empty = 0;
+            int can_be_empty = 1;
+            // a cell can be empty only when it is surrounded by a number cell or other empty cells
             for (int i = 0; i < neighs_count; i++)
             {
                 int x = neighbours[i].x, y = neighbours[i].y;
-                if (boardArray[x][y].value == BOMB)
+                if (boardArray[x][y].value != BOMB)
                 {
-                    can_be_empty = 1;
+                    can_be_empty = 0;
                     break;
                 }
             }
@@ -104,19 +118,23 @@ EXTERNAL int initialize_game_states()
                 continue;
 
             // calculating bomb counts
-
             int total_bomb_around = 0;
             for (int i = 0; i < neighs_count; i++)
             {
-                int x = neighbours[i].x, y = neighbours[i].y;
+                int x = neighbours[i].x;
+                int y = neighbours[i].y;
                 if (boardArray[x][y].value == BOMB)
                     total_bomb_around++;
             }
 
             boardArray[i][j].value = total_bomb_around;
-            hint_number_count++;
+
+            // if total_bomb_around is 0, it will be interpreted as emtpy cell so checking it before incrementing hint_number_count
+            if (boardArray[i][j].value > EMPTY)
+                hint_number_count++;
         }
     }
+
     return 1;
 }
 
@@ -142,22 +160,7 @@ EXTERNAL void set_cell_count(int cell_count_a)
     is_board_initialized = 1;
 }
 
-EXTERNAL int change_cell_values(int row_a, int col_a, int flagged, int show)
-{
-    if (row_a >= cell_count || col_a >= cell_count)
-        return 0;
-    boardArray[row_a][col_a].flagged = flagged;
-    boardArray[row_a][col_a].show = show;
-
-    return 1;
-}
-
-EXTERNAL int is_playing()
-{
-    return playing;
-}
-
-EXTERNAL void reveal_empty_cells(int x, int y)
+void reveal_empty_cells(int x, int y)
 {
     // Using dfs for searching empty cells
     boardArray[x][y].show = 1;
@@ -186,7 +189,7 @@ EXTERNAL void reveal_empty_cells(int x, int y)
 
             if (cell.value >= EMPTY && !cell.show && !cell.flagged)
             {
-                boardArray[curr_x][curr_y].show = 1;
+                reveal_cell(curr_x, curr_y);
                 if (cell.value == EMPTY)
                 {
                     // q.push([ currX, currY ]);
@@ -198,14 +201,42 @@ EXTERNAL void reveal_empty_cells(int x, int y)
     vec2q_free(q);
 }
 
+EXTERNAL int change_cell_values(int row_a, int col_a, int flagged, int show)
+{
+    if (row_a >= cell_count || col_a >= cell_count || !playing || won)
+        return 0;
+
+    if (show)
+        reveal_cell(row_a, col_a);
+
+    if (hint_number_count == revealed_count)
+    {
+        playing = 0;
+        won = 1;
+    }
+    if (boardArray[row_a][col_a].value == BOMB && show)
+    {
+        playing = 0;
+    }
+    if (boardArray[row_a][col_a].value == EMPTY && show)
+    {
+
+        reveal_empty_cells(row_a, col_a);
+    }
+    boardArray[row_a][col_a].flagged = flagged;
+    boardArray[row_a][col_a].show = show;
+
+    return 1;
+}
+
+EXTERNAL int is_playing()
+{
+    return playing;
+}
+
 EXTERNAL int has_won()
 {
     return won;
-}
-
-EXTERNAL int get_hint_number_count()
-{
-    return hint_number_count;
 }
 
 /* value of cell at index [x][y] will be appended in cell_arr in order of {value, flagged, show}
@@ -221,6 +252,15 @@ get_cell_at(int x, int y, int *cell_arr)
     cell_arr[1] = cell.flagged;
     cell_arr[2] = cell.show;
     return 1;
+}
+EXTERNAL void set_bomb_probability(float prob)
+{
+    BOMB_PROBABILITY = prob;
+}
+
+EXTERNAL void set_empty_cell_probability(float prob)
+{
+    EMPTY_CELL_PROBABILITY = prob;
 }
 
 EXTERNAL void dprint()
