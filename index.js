@@ -46,7 +46,7 @@ const num_t = 'number';
 // console.log(Module.calledRun);
 Module.onRuntimeInitialized = function () {
 
-    // a cell's data will come int this buffer
+    // a cell's data will come int this memory buffer
     let cell_buffer = null;
     cell_buffer = Module._malloc(3 * Int32Array.BYTES_PER_ELEMENT);
 
@@ -55,11 +55,11 @@ Module.onRuntimeInitialized = function () {
     const wasm_change_cell_values = Module.cwrap("change_cell_values", null, [num_t, num_t, num_t, num_t])
 
     const wasm_initialize_game_states = Module.cwrap("initialize_game_states", num_t);
+    const wasm_set_bomb_prob = Module.cwrap("set_bomb_probability", null, [num_t]);
+    const wasm_set_empty_cell_prob = Module.cwrap("set_empty_cell_probability", null, [num_t]);
     const wasm_set_cell_count = Module.cwrap("set_cell_count", null, [num_t]);
-    const wasm_reveal_empty_cells = Module.cwrap("reveal_empty_cells", null, [num_t, num_t]);
     const wasm_is_playing = Module.cwrap("is_playing", num_t);
     const wasm_has_won = Module.cwrap("has_won", num_t);
-    const wasm_hint_number_count = Module.cwrap("get_hint_number_count", num_t);
 
     // Wrapper around wasm funcs
     const get_cell_at = (x, y) => {
@@ -68,9 +68,6 @@ Module.onRuntimeInitialized = function () {
         return new Cell(array[0], array[1], array[2]);
     }
 
-    // Game states
-    let hintNumbersCount = 0;
-    let revealedHintsNumbers = 0;
 
     // Configurations
     const HACK = false;
@@ -90,85 +87,14 @@ Module.onRuntimeInitialized = function () {
     const RECT_STROKE_COLOR = "black";
 
 
-    // Initializing in wasm
+    // Initializing game states in wasm
     wasm_set_cell_count(CELL_COUNT);
+    wasm_set_bomb_prob(BOMB_PROBABILITY);
+    wasm_set_empty_cell_prob(EMPTY_CELL_PROBABILITY);
     const is_initialized = wasm_initialize_game_states();
+
     console.log("INITIALIZED: ", is_initialized);
 
-
-    const isLegalCoord = (x, y) => {
-        return x >= 0 && y >= 0 && x < CELL_COUNT && y < CELL_COUNT
-    }
-
-    const getLegalMooreNeighbours = (i, j) => {
-        // Returns moore neighbours' coordinats
-        let neighbours = [];
-        for (let m = -1; m <= 1; m++) {
-            for (let n = -1; n <= 1; n++) {
-                let [x, y] = [i + m, j + n];
-                if ((x === i && y === j) || !isLegalCoord(x, y)) continue;
-                neighbours.push([x, y]);
-            }
-        }
-        return neighbours;
-    }
-
-    const initializeGameStates = () => {
-
-        won = false;
-        playing = true;
-        const boardArray = [];
-        // Generating bomb
-        for (let i = 0; i < CELL_COUNT; i++) {
-            let inner = [];
-            for (let j = 0; j < CELL_COUNT; j++) {
-                let cellValue = Math.random() < BOMB_PROBABILITY ? BOMB : EMPTY;
-                let cell = new Cell(cellValue);
-                inner.push(cell);
-            }
-            boardArray.push(inner);
-        }
-
-        // populating hint numbers and empty cells
-        for (let i = 0; i < CELL_COUNT; i++) {
-            for (let j = 0; j < CELL_COUNT; j++) {
-                const cell = boardArray[i][j];
-                if (cell.value === BOMB) continue;
-
-                const neighs = getLegalMooreNeighbours(i, j);
-                const canbeEmpty = neighs.every(([x, y]) => boardArray[x][y].value !== BOMB);
-                if (canbeEmpty && Math.random() < EMPTY_CELL_PROBABILITY) continue;
-
-                // calculating bomb counts
-                const totalBombAround = neighs.reduce((a, [x, y]) => a + (boardArray[x][y].value === BOMB), 0);
-                boardArray[i][j].value = totalBombAround;
-                hintNumbersCount++;
-
-            }
-        }
-        return boardArray;
-    }
-
-    const revealEmptyCells = (x, y) => {
-        // Using dfs for searching empty cells
-        boardArray[x][y].show = true;
-        let q = [[x, y]];
-        while (q.length > 0) {
-            let [x, y] = q.pop();
-
-            const neighs = getLegalMooreNeighbours(x, y);
-
-            for (let [currX, currY] of neighs) {
-                let cell = boardArray[currX][currY];
-                if (cell.value >= EMPTY && !cell.show && !cell.flagged) {
-                    boardArray[currX][currY].show = true;
-                    if (cell.value === EMPTY)
-                        q.push([currX, currY]);
-                }
-            }
-
-        }
-    }
 
     const handleClickEvents = (e) => {
         e.preventDefault();
@@ -184,20 +110,10 @@ Module.onRuntimeInitialized = function () {
         if (cell.show || !wasm_is_playing()) return;
         if (e.type === "click") {
             if (cell.flagged) return;
-            if (cell.value > 0) {
-                // boardArray[cellX][cellY].show = true;
-                wasm_change_cell_values(cellX, cellY, cell.flagged, 1);
-                revealedHintsNumbers++;
-                let won = revealedHintsNumbers === wasm_hint_number_count();
-                console.log(won);
-            }
-            // Player lost here
-            else if (cell.value === BOMB) {
-                // playing = false;
-            } else if (cell.value === EMPTY) {
-                wasm_reveal_empty_cells(cellX, cellY);
-                // revealEmptyCells(cellX, cellY);
-            }
+            // boardArray[cellX][cellY].show = true;
+            // playing = false;
+            wasm_change_cell_values(cellX, cellY, cell.flagged, 1);
+
             renderBoard();
         }
         else if (e.type === "contextmenu") {
@@ -224,6 +140,7 @@ Module.onRuntimeInitialized = function () {
         let x_pos = 0;
         let y_pos = 0;
 
+
         for (let i = 0; i < CELL_COUNT; i++) {
             x_pos = 0;
             for (let j = 0; j < CELL_COUNT; j++) {
@@ -239,7 +156,7 @@ Module.onRuntimeInitialized = function () {
                 // let cell = boardArray[i][j];
                 let cell = get_cell_at(i, j);
 
-                if (!wasm_is_playing()) {
+                if (!wasm_is_playing() && !wasm_has_won()) {
                     if (cell.value === BOMB) {
                         cell.show = true;
                     }
@@ -275,10 +192,11 @@ Module.onRuntimeInitialized = function () {
         }
 
         if (wasm_has_won()) {
-            alert("You won :)");
+            console.log("YOU WON!!!")
         }
         else if (!wasm_is_playing() && !wasm_has_won()) {
             toggleSmily();
+            console.log("you lost!")
         }
     }
 
