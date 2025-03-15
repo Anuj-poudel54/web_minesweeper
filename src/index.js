@@ -77,6 +77,7 @@ function gameLoader() {
     const HACK = false;
     const BOMB_PROBABILITY = .255;
     const EMPTY_CELL_PROBABILITY = .5;
+    const REVEAL_CELLS_AT_INIT = true;
 
     const CELL_COUNT = 8;
     const CELL_SIZE = canvas.width / CELL_COUNT; // height & width of a cell
@@ -95,7 +96,7 @@ function gameLoader() {
     wasm_set_cell_count(CELL_COUNT);
     wasm_set_bomb_prob(BOMB_PROBABILITY);
     wasm_set_empty_cell_prob(EMPTY_CELL_PROBABILITY);
-    const is_initialized = wasm_initialize_game_states(0);
+    const is_initialized = wasm_initialize_game_states(REVEAL_CELLS_AT_INIT);
 
     console.log("INITIALIZED: ", is_initialized);
 
@@ -212,7 +213,7 @@ function gameLoader() {
     gameStatsWrapper.onclick = (e) => {
         if (Array.from(e.target.classList).includes("smily")) {
             wasm_set_cell_count(CELL_COUNT);
-            const is_inited = wasm_initialize_game_states();
+            const is_inited = wasm_initialize_game_states(REVEAL_CELLS_AT_INIT);
             console.log(is_inited);
             // boardArray = initializeGameStates();
             renderBoard();
