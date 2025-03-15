@@ -107,7 +107,7 @@ EXTERNAL int initialize_game_states()
             for (int i = 0; i < neighs_count; i++)
             {
                 int x = neighbours[i].x, y = neighbours[i].y;
-                if (boardArray[x][y].value != BOMB)
+                if (boardArray[x][y].value == BOMB)
                 {
                     can_be_empty = 0;
                     break;
