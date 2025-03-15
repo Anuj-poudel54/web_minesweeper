@@ -214,7 +214,6 @@ function gameLoader() {
         if (Array.from(e.target.classList).includes("smily")) {
             wasm_set_cell_count(CELL_COUNT);
             const is_inited = wasm_initialize_game_states(REVEAL_CELLS_AT_INIT);
-            console.log(is_inited);
             // boardArray = initializeGameStates();
             renderBoard();
             const allSmily = gameStatsWrapper.querySelectorAll(".smily");
