@@ -26,7 +26,7 @@ typedef struct
     int show;
 } Cell;
 
-int cell_count = 0;
+int cell_count = 8;
 Cell **boardArray = NULL;
 int is_board_initialized = 0;
 
@@ -69,9 +69,50 @@ void reveal_cell(int x, int y)
         revealed_count++;
 }
 
+void reveal_empty_cells(int x, int y)
+{
+    // Using dfs for searching empty cells
+    boardArray[x][y].show = 1;
+
+    // int q[] = [[x, y]];
+    Vec2Q *q = create_vect2_q();
+    vec2q_enqueue(q, (Vec2){x, y});
+
+    // while (q.length > 0)
+    while (!vec2q_is_empty(q))
+    {
+        // let[x, y] = q.pop();
+        Vec2 v = vec2q_dequeue(q);
+        int x = v.x, y = v.y;
+
+        // const neighs = getLegalMooreNeighbours(x, y);
+        int neighs_count = get_legal_moore_neighbours(x, y);
+
+        // for (let[currX, currY] of neighs)
+        for (int i = 0; i < neighs_count; i++)
+        {
+            // let cell = boardArray[currX][currY];
+            Vec2 v = neighbours[i];
+            int curr_x = v.x, curr_y = v.y;
+            Cell cell = boardArray[curr_x][curr_y];
+
+            if (cell.value >= EMPTY && !cell.show && !cell.flagged)
+            {
+                reveal_cell(curr_x, curr_y);
+                if (cell.value == EMPTY)
+                {
+                    // q.push([ currX, currY ]);
+                    vec2q_enqueue(q, (Vec2){curr_x, curr_y});
+                }
+            }
+        }
+    }
+    vec2q_free(q);
+}
+
 // exported functions
 
-EXTERNAL int initialize_game_states()
+EXTERNAL int initialize_game_states(int init_reveal_cell)
 {
 
     if (!is_board_initialized)
@@ -135,6 +176,17 @@ EXTERNAL int initialize_game_states()
                 hint_number_count++;
         }
     }
+    if (init_reveal_cell)
+    {
+        int xe = cell_count / 2, ye = cell_count / 2;
+        while (boardArray[xe][ye].value != EMPTY)
+        {
+
+            xe = get_random_value() * cell_count;
+            ye = get_random_value() * cell_count;
+        }
+        reveal_empty_cells(xe, ye);
+    }
 
     return 1;
 }
@@ -159,47 +211,6 @@ EXTERNAL void set_cell_count(int cell_count_a)
     }
     cell_count = cell_count_a;
     is_board_initialized = 1;
-}
-
-void reveal_empty_cells(int x, int y)
-{
-    // Using dfs for searching empty cells
-    boardArray[x][y].show = 1;
-
-    // int q[] = [[x, y]];
-    Vec2Q *q = create_vect2_q();
-    vec2q_enqueue(q, (Vec2){x, y});
-
-    // while (q.length > 0)
-    while (!vec2q_is_empty(q))
-    {
-        // let[x, y] = q.pop();
-        Vec2 v = vec2q_dequeue(q);
-        int x = v.x, y = v.y;
-
-        // const neighs = getLegalMooreNeighbours(x, y);
-        int neighs_count = get_legal_moore_neighbours(x, y);
-
-        // for (let[currX, currY] of neighs)
-        for (int i = 0; i < neighs_count; i++)
-        {
-            // let cell = boardArray[currX][currY];
-            Vec2 v = neighbours[i];
-            int curr_x = v.x, curr_y = v.y;
-            Cell cell = boardArray[curr_x][curr_y];
-
-            if (cell.value >= EMPTY && !cell.show && !cell.flagged)
-            {
-                reveal_cell(curr_x, curr_y);
-                if (cell.value == EMPTY)
-                {
-                    // q.push([ currX, currY ]);
-                    vec2q_enqueue(q, (Vec2){curr_x, curr_y});
-                }
-            }
-        }
-    }
-    vec2q_free(q);
 }
 
 EXTERNAL int change_cell_values(int row_a, int col_a, int flagged, int show)
