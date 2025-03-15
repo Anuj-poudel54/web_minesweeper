@@ -41,6 +41,7 @@ int is_legal_coord(Vec2 vec)
 }
 
 Vec2 neighbours[8] = {0};
+/* Neighbours will be appended to 'neighbours' */
 int get_legal_moore_neighbours(int i, int j)
 {
     // Returns moore neighbours' count for index i j
@@ -261,6 +262,13 @@ EXTERNAL void set_bomb_probability(float prob)
 EXTERNAL void set_empty_cell_probability(float prob)
 {
     EMPTY_CELL_PROBABILITY = prob;
+}
+EXTERNAL void free_all()
+{
+
+    for (int i = 0; i < cell_count; i++)
+        free(boardArray[i]);
+    free(boardArray);
 }
 
 EXTERNAL void dprint()
