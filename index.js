@@ -72,7 +72,7 @@ function gameLoader() {
     }
 
     // Configurations
-    const HACK = true;
+    const HACK = false;
     const BOMB_PROBABILITY = .255;
     const EMPTY_CELL_PROBABILITY = .5;
     const REVEAL_CELLS_AT_INIT = true;
