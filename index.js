@@ -18,6 +18,13 @@ const canvas = document.getElementById("canvas");
 const gameStatsWrapper = document.querySelector(".game-stats");
 const ctx = canvas.getContext("2d");
 
+// loading sfxs
+// Sound Effect by https://pixabay.com/users/freesound_community-46691455/?utm_source=link-attribution&utm_medium=referral&utm_campaign=music&utm_content=6761"
+const boomAud = new Audio("/assets/audios/boom.mp3");
+const clickAud = new Audio("./assets/audios/click.mp3");
+clickAud.volume = .5;
+boomAud.volume = .5;
+
 class Cell {
     value = null;
     constructor(value, flagged, show) {
@@ -102,6 +109,8 @@ function gameLoader() {
         let cell = get_cell_at(cellX, cellY);
 
         if (cell.show || !wasm_is_playing()) return;
+        if (cell.value !== BOMB)
+            clickAud.play();
         if (e.type === "click") {
             if (cell.flagged) return;
             // boardArray[cellX][cellY].show = true;
@@ -114,6 +123,7 @@ function gameLoader() {
             // boardArray[cellX][cellY].flagged = !boardArray[cellX][cellY].flagged;
             wasm_change_cell_values(cellX, cellY, !cell.flagged, cell.show);
             renderBoard();
+            clickAud.play();
         }
 
     }
@@ -190,6 +200,7 @@ function gameLoader() {
         }
         else if (!wasm_is_playing() && !wasm_has_won()) {
             toggleSmily();
+            boomAud.play();
             console.log("you lost!")
         }
     }
