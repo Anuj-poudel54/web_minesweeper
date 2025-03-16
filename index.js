@@ -22,8 +22,10 @@ const ctx = canvas.getContext("2d");
 // Sound Effect by https://pixabay.com/users/freesound_community-46691455/?utm_source=link-attribution&utm_medium=referral&utm_campaign=music&utm_content=6761"
 const boomAud = new Audio("/assets/audios/boom.mp3");
 const clickAud = new Audio("./assets/audios/click.mp3");
+const wonAud = new Audio("./assets/audios/won.mp3");
 clickAud.volume = .5;
 boomAud.volume = .5;
+wonAud.volume = .5;
 
 class Cell {
     value = null;
@@ -70,7 +72,7 @@ function gameLoader() {
     }
 
     // Configurations
-    const HACK = false;
+    const HACK = true;
     const BOMB_PROBABILITY = .255;
     const EMPTY_CELL_PROBABILITY = .5;
     const REVEAL_CELLS_AT_INIT = true;
@@ -109,6 +111,7 @@ function gameLoader() {
         let cell = get_cell_at(cellX, cellY);
 
         if (cell.show || !wasm_is_playing()) return;
+        clickAud.currentTime = 0;
         if (cell.value !== BOMB)
             clickAud.play();
         if (e.type === "click") {
@@ -197,6 +200,10 @@ function gameLoader() {
 
         if (wasm_has_won()) {
             console.log("YOU WON!!!")
+            wonAud.currentTime = 0;
+            wonAud.play();
+
+
         }
         else if (!wasm_is_playing() && !wasm_has_won()) {
             toggleSmily();
