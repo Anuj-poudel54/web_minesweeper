@@ -20,7 +20,7 @@ const ctx = canvas.getContext("2d");
 
 // loading sfxs
 // Sound Effect by https://pixabay.com/users/freesound_community-46691455/?utm_source=link-attribution&utm_medium=referral&utm_campaign=music&utm_content=6761"
-const boomAud = new Audio("/assets/audios/boom.mp3");
+const boomAud = new Audio("./assets/audios/boom.mp3");
 const clickAud = new Audio("./assets/audios/click.mp3");
 const wonAud = new Audio("./assets/audios/won.mp3");
 clickAud.volume = .5;
